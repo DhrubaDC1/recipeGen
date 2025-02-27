@@ -1,22 +1,24 @@
 import React, { useState } from "react";
 import "./App.css";
-import MarkdownRenderer from "./MarkdownRenderer";
-
+function removeBackticksAndParse(str) {
+  let recipe = JSON.parse(str.replace(/^```json|```$/g, "").trim());
+  return recipe;
+}
 async function getRecipe(image, setRecipe) {
   console.log("🚀 ~ getRecipe ~ image:", image);
   const formData = new FormData();
   formData.append("image", image);
 
   setRecipe("Loading...");
-  const response = await fetch(
-    "https://e1d0-45-248-149-210.ngrok-free.app/api/upload",
-    {
-      method: "POST",
-      body: formData,
-    }
-  );
+  const response = await fetch("http://localhost:3000/api/upload", {
+    method: "POST",
+    body: formData,
+  });
   const data = await response.json();
-  setRecipe(data.recipe);
+  const recipe = removeBackticksAndParse(data.recipe);
+
+  console.log("🚀 ~ getRecipe ~ recipe:", recipe);
+  setRecipe(recipe);
 }
 
 function App() {
@@ -58,13 +60,7 @@ function App() {
           <input type="file" accept="image/*" onChange={handleImageUpload} />
           <button onClick={handleTakePhoto}>Take Photo</button>
         </div>
-        <div>
-          {recipe ? (
-            <MarkdownRenderer markdownContent={recipe} />
-          ) : (
-            "No recipe yet"
-          )}
-        </div>
+        <div></div>
       </div>
     </>
   );

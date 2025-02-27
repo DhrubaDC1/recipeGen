@@ -54,7 +54,7 @@ export default async function getRecipe(path) {
             },
           },
           {
-            text: "Given this image:\n\n1. First, describe the image\n2. Then, detail the recipe to bake this item in JSON format. Include item names and quantities for the recipe",
+            text: "Given this image:\nOnly Provide details in JSON format\n First, describe the image\nThen, detail the recipe to bake this item. Include item names and quantities for the recipe. Only JSON nothing else.",
           },
         ],
       },

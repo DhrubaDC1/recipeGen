@@ -1,18 +1,18 @@
 import React, { useState } from "react";
 import "./App.css";
+
 function removeBackticksAndParse(str) {
   let recipe = JSON.parse(str.replace(/^```json|```$/g, "").trim());
   return recipe;
 }
 
 function App() {
-  const [recipe, setRecipe] = useState("Loading...");
+  const [recipe, setRecipe] = useState(null);
   const [image, setImage] = useState(null);
+
   async function getRecipe(image) {
-    console.log("🚀 ~ getRecipe ~ image:", image);
     const formData = new FormData();
     formData.append("image", image);
-
     setRecipe("Loading...");
     const response = await fetch("http://localhost:3000/api/upload", {
       method: "POST",
@@ -20,8 +20,6 @@ function App() {
     });
     const data = await response.json();
     const recipe = removeBackticksAndParse(data.recipe);
-
-    console.log("🚀 ~ getRecipe ~ recipe:", recipe);
     setRecipe(recipe);
   }
 
@@ -36,12 +34,10 @@ function App() {
     const video = document.createElement("video");
     video.srcObject = stream;
     video.play();
-
     const canvas = document.createElement("canvas");
     canvas.width = 640;
     canvas.height = 480;
     const context = canvas.getContext("2d");
-
     video.addEventListener("canplay", () => {
       context.drawImage(video, 0, 0, canvas.width, canvas.height);
       canvas.toBlob((blob) => {
@@ -53,71 +49,62 @@ function App() {
   };
 
   return (
-    <>
-      <div style={{ textAlign: "start" }}>
-        <div>
-          {recipe !== "Loading..." ? (
-            <div>
-              {image && (
-                <img
-                  src={URL.createObjectURL(image)}
-                  alt="Uploaded"
-                  style={{ maxWidth: "100%", height: "auto" }}
-                />
-              )}
-              <h2>Recipe for {recipe?.recipe_name}</h2>
-              <h2>Image Description</h2>
-              <p>{recipe?.image_description}</p>
-              <h2>Ingredients</h2>
-              <ul>
-                {recipe?.ingredients.map((ingredient) => (
-                  <li key={ingredient.item_name}>
-                    {ingredient.item_name} - {ingredient.quantity}
-                  </li>
-                ))}
-              </ul>
-              <h2>Instructions</h2>
-              <ol>
-                {recipe?.instructions.map((instruction, index) => (
-                  <li key={index}>{instruction}</li>
-                ))}
-              </ol>
-              <h2>Nutrition</h2>
-              <ul>
-                {Object.entries(recipe?.nutrition_count).map(([key, value]) => (
-                  <li key={key}>
-                    {key}: {value}
-                  </li>
-                ))}
-              </ul>
-              <div>
-                <p>Upload Another Image</p>
-                <input
-                  type="file"
-                  accept="image/*"
-                  placeholder="Upload another image"
-                  onChange={handleImageUpload}
-                />
-              </div>
-            </div>
-          ) : (
-            <div>
-              <h1>Recipe Generator</h1>
-              <div>
-                <h2>Upload an image</h2>
-                <input
-                  type="file"
-                  accept="image/*"
-                  placeholder="Upload an image"
-                  onChange={handleImageUpload}
-                />
-              </div>
-              <p>No recipe available. Please upload an image.</p>
-            </div>
-          )}
-        </div>
+    <div className="app-container">
+      <h1 className="header">Recipe Generator</h1>
+      <div className="upload-section">
+        <label className="upload-button">
+          Upload Image
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleImageUpload}
+            style={{ display: "none" }}
+          />
+        </label>
       </div>
-    </>
+      {recipe === "Loading..." ? (
+        <p className="loading">Loading recipe...</p>
+      ) : recipe ? (
+        <div className="recipe-details">
+          <img
+            src={URL.createObjectURL(image)}
+            alt="Uploaded"
+            className="recipe-image"
+          />
+          <h2 className="recipe-name">{recipe.recipe_name}</h2>
+          <h3 className="section-heading">Image Description</h3>
+          <p className="description">{recipe.image_description}</p>
+          <h3 className="section-heading">Ingredients</h3>
+          <ul className="ingredients-list">
+            {recipe.ingredients.map((ingredient, index) => (
+              <li key={index}>
+                {ingredient.item_name} - {ingredient.quantity}
+              </li>
+            ))}
+          </ul>
+          <h3 className="section-heading">Instructions</h3>
+          <ol className="instructions-list">
+            {recipe.instructions.map((instruction, index) => (
+              <li key={index}>{instruction}</li>
+            ))}
+          </ol>
+          <h3 className="section-heading">Nutrition</h3>
+          <div className="nutrition-grid">
+            {Object.entries(recipe.nutrition_count).map(([key, value]) => (
+              <div key={key} className="nutrition-item">
+                <span>{key}:</span>
+                <br></br>
+                <span>{value}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : (
+        <p className="no-recipe">
+          No recipe available. Please upload an image.
+        </p>
+      )}
+    </div>
   );
 }
 

@@ -9,18 +9,25 @@ function removeBackticksAndParse(str) {
 function App() {
   const [recipe, setRecipe] = useState(null);
   const [image, setImage] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   async function getRecipe(image) {
     const formData = new FormData();
     formData.append("image", image);
-    setRecipe("Loading...");
-    const response = await fetch("http://localhost:3000/api/upload", {
-      method: "POST",
-      body: formData,
-    });
-    const data = await response.json();
-    const recipe = removeBackticksAndParse(data.recipe);
-    setRecipe(recipe);
+    setIsLoading(true);
+    try {
+      const response = await fetch("http://localhost:3000/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+      const data = await response.json();
+      const recipe = removeBackticksAndParse(data.recipe);
+      setRecipe(recipe);
+    } catch (error) {
+      console.error("Error fetching recipe:", error);
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   const handleImageUpload = (event) => {
@@ -62,8 +69,11 @@ function App() {
           />
         </label>
       </div>
-      {recipe === "Loading..." ? (
-        <p className="loading">Loading recipe...</p>
+      {isLoading ? (
+        <div className="loading-container">
+          <div className="loader"></div>
+          <p>Generating recipe...</p>
+        </div>
       ) : recipe ? (
         <div className="recipe-details">
           <img
@@ -93,7 +103,7 @@ function App() {
             {Object.entries(recipe.nutrition_count).map(([key, value]) => (
               <div key={key} className="nutrition-item">
                 <span>{key}:</span>
-                <br></br>
+                <br />
                 <span>{value}</span>
               </div>
             ))}

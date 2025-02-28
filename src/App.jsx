@@ -21,6 +21,7 @@ function App() {
         body: formData,
       });
       const data = await response.json();
+      console.log(data.fileName);
       setImage(data.fileName);
       const recipe = removeBackticksAndParse(data.recipe);
       setRecipe(recipe);
@@ -58,7 +59,7 @@ function App() {
       ) : recipe ? (
         <div className="recipe-details">
           <img
-            src={`uploads/${image}`}
+            src={`http://localhost:3000/uploads/${image}`}
             alt="Uploaded"
             className="recipe-image"
           />

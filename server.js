@@ -38,7 +38,7 @@ app.post("/api/upload", upload.single("image"), async (req, res) => {
   if (!req.file) {
     return res.status(400).send("No file uploaded or invalid file type.");
   }
-  const uploadPath = path.join(__dirname, "public/uploads");
+  const uploadPath = path.join(__dirname, "uploads");
   if (!fs.existsSync(uploadPath)) {
     fs.mkdirSync(uploadPath, { recursive: true });
   }
@@ -70,7 +70,7 @@ app.get("/api/recipe", async (req, res) => {
 
 // Serve static files from the React app
 app.use(express.static(path.join(__dirname, "dist")));
-
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 // Handle client-side routing
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "dist", "index.html"));

@@ -5,6 +5,7 @@ import cors from "cors";
 import { fileURLToPath } from "url";
 import getRecipe from "./src/getResponse.js";
 import multer from "multer";
+import heicConvert from "heic-convert";
 
 const app = express();
 const port = 3000;
@@ -22,6 +23,7 @@ const fileFilter = (req, file, cb) => {
     "image/gif",
     "image/bmp",
     "image/webp",
+    "image/heic",
   ];
   if (allowedMimeTypes.includes(file.mimetype)) {
     cb(null, true);
@@ -36,14 +38,26 @@ app.post("/api/upload", upload.single("image"), async (req, res) => {
   if (!req.file) {
     return res.status(400).send("No file uploaded or invalid file type.");
   }
-  const imageBuffer = req.file.buffer;
   const uploadPath = path.join(__dirname, "uploads");
   if (!fs.existsSync(uploadPath)) {
     fs.mkdirSync(uploadPath, { recursive: true });
   }
-  const fileName = `${Date.now()}-${req.file.originalname}`;
-  const filePath = path.join(uploadPath, fileName);
-  fs.writeFileSync(filePath, imageBuffer);
+  let fileName = `${Date.now()}-${req.file.originalname}`;
+  let filePath = path.join(uploadPath, fileName);
+
+  if (req.file.mimetype === "image/heic") {
+    fileName = `${Date.now()}-${req.file.originalname.split(".")[0]}.jpeg`;
+    filePath = path.join(uploadPath, fileName);
+    const outputBuffer = await heicConvert({
+      buffer: req.file.buffer,
+      format: "JPEG",
+      quality: 1,
+    });
+    fs.writeFileSync(filePath, outputBuffer);
+  } else {
+    fs.writeFileSync(filePath, req.file.buffer);
+  }
+
   const recipe = await getRecipe(filePath);
   res.json({ recipe });
 });

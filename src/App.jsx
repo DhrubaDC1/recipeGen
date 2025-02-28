@@ -11,9 +11,9 @@ function App() {
   const [image, setImage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  async function getRecipe(image) {
+  async function getRecipe(imageFile) {
     const formData = new FormData();
-    formData.append("image", image);
+    formData.append("image", imageFile);
     setIsLoading(true);
     try {
       const response = await fetch("/api/upload", {
@@ -21,6 +21,7 @@ function App() {
         body: formData,
       });
       const data = await response.json();
+      setImage(data.fileName);
       const recipe = removeBackticksAndParse(data.recipe);
       setRecipe(recipe);
     } catch (error) {
@@ -32,29 +33,9 @@ function App() {
 
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
-    setImage(file);
     getRecipe(file);
   };
-
-  const handleTakePhoto = async () => {
-    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-    const video = document.createElement("video");
-    video.srcObject = stream;
-    video.play();
-    const canvas = document.createElement("canvas");
-    canvas.width = 640;
-    canvas.height = 480;
-    const context = canvas.getContext("2d");
-    video.addEventListener("canplay", () => {
-      context.drawImage(video, 0, 0, canvas.width, canvas.height);
-      canvas.toBlob((blob) => {
-        setImage(blob);
-        getRecipe(blob);
-        stream.getTracks().forEach((track) => track.stop());
-      }, "image/png");
-    });
-  };
-
+  console.log("hello");
   return (
     <div className="app-container">
       <h1 className="header">Recipe Generator</h1>
@@ -77,7 +58,7 @@ function App() {
       ) : recipe ? (
         <div className="recipe-details">
           <img
-            src={URL.createObjectURL(image)}
+            src={`uploads/${image}`}
             alt="Uploaded"
             className="recipe-image"
           />

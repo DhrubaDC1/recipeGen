@@ -38,7 +38,7 @@ app.post("/api/upload", upload.single("image"), async (req, res) => {
   if (!req.file) {
     return res.status(400).send("No file uploaded or invalid file type.");
   }
-  const uploadPath = path.join(__dirname, "uploads");
+  const uploadPath = path.join(__dirname, "public/uploads");
   if (!fs.existsSync(uploadPath)) {
     fs.mkdirSync(uploadPath, { recursive: true });
   }
@@ -59,7 +59,7 @@ app.post("/api/upload", upload.single("image"), async (req, res) => {
   }
 
   const recipe = await getRecipe(filePath);
-  res.json({ recipe });
+  res.json({ recipe, fileName });
 });
 
 app.get("/api/recipe", async (req, res) => {

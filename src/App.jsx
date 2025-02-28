@@ -92,7 +92,7 @@ function App() {
             ))}
           </div>
           <div>
-            <h3 className="section-heading">YouTube Video</h3>
+            <h3 className="section-heading">Relevant YouTube Video</h3>
 
             <YouTubeVideo keyword={recipe.recipe_name} />
           </div>

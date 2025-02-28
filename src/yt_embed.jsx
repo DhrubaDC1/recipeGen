@@ -25,11 +25,9 @@ const YouTubeVideo = ({ keyword }) => {
   }, [keyword, apiKey]); // Re-run when keyword or apiKey changes
 
   return (
-    <div>
+    <div style={{ marginTop: "1rem" }}>
       {videoId ? (
         <iframe
-          width="560"
-          height="315"
           src={`https://www.youtube.com/embed/${videoId}`}
           frameBorder="0"
           allowFullScreen

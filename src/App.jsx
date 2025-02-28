@@ -59,7 +59,7 @@ function App() {
       ) : recipe ? (
         <div className="recipe-details">
           <img
-            src={`http://localhost:3000/uploads/${image}`}
+            src={`https://recipegen-lzpw.onrender.com/uploads/${image}`}
             alt="Uploaded"
             className="recipe-image"
           />

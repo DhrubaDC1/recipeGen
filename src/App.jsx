@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "./App.css";
 import YouTubeVideo from "./yt_embed";
+import CameraCapture from "./CameraCapture";
 
 function removeBackticksAndParse(str) {
   let recipe = JSON.parse(str.replace(/^```json|```$/g, "").trim());
@@ -11,6 +12,7 @@ function App() {
   const [recipe, setRecipe] = useState(null);
   const [image, setImage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isCameraOpen, setIsCameraOpen] = useState(false);
 
   async function getRecipe(imageFile) {
     const formData = new FormData();
@@ -37,7 +39,20 @@ function App() {
     const file = event.target.files[0];
     getRecipe(file);
   };
-  console.log("hello");
+
+  const openCamera = () => {
+    setIsCameraOpen(true);
+  };
+
+  const closeCamera = () => {
+    setIsCameraOpen(false);
+  };
+
+  const handleCapture = (file) => {
+    getRecipe(file);
+    setIsCameraOpen(false);
+  };
+
   return (
     <div className="app-container">
       <h1 className="header">Recipe Generator</h1>
@@ -51,7 +66,13 @@ function App() {
             style={{ display: "none" }}
           />
         </label>
+        <button className="upload-button" onClick={openCamera}>
+          Take Photo
+        </button>
       </div>
+      {isCameraOpen && (
+        <CameraCapture onCapture={handleCapture} onClose={closeCamera} />
+      )}
       {isLoading ? (
         <div className="loading-container">
           <div className="loader"></div>
@@ -93,13 +114,12 @@ function App() {
           </div>
           <div>
             <h3 className="section-heading">Relevant YouTube Video</h3>
-
             <YouTubeVideo keyword={recipe.recipe_name} />
           </div>
         </div>
       ) : (
         <p className="no-recipe">
-          No recipe available. Please upload an image.
+          No recipe available. Please upload an image or take a photo.
         </p>
       )}
     </div>

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./App.css";
+import YouTubeVideo from "./yt_embed";
 
 function removeBackticksAndParse(str) {
   let recipe = JSON.parse(str.replace(/^```json|```$/g, "").trim());
@@ -89,6 +90,11 @@ function App() {
                 <span>{value}</span>
               </div>
             ))}
+          </div>
+          <div>
+            <h3 className="section-heading">YouTube Video</h3>
+
+            <YouTubeVideo keyword={recipe.recipe_name} />
           </div>
         </div>
       ) : (

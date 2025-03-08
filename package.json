@@ -14,6 +14,7 @@
     "@google/generative-ai": "^0.22.0",
     "@tailwindcss/postcss7-compat": "^2.2.17",
     "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "fs": "^0.0.1-security",
     "heic-convert": "^2.1.0",

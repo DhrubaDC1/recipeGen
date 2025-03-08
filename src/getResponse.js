@@ -4,8 +4,9 @@ import {
   HarmBlockThreshold,
 } from "@google/generative-ai";
 import { GoogleAIFileManager } from "@google/generative-ai/server";
-
-const apiKey = "AIzaSyCQ0ijqIAj4OadkoWPB1BlPqLfPqj-oaUE";
+import { configDotenv } from "dotenv";
+configDotenv();
+const apiKey = process.env.GEM_API;
 const genAI = new GoogleGenerativeAI(apiKey);
 const fileManager = new GoogleAIFileManager(apiKey);
 

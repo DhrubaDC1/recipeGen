@@ -54,7 +54,7 @@ export default async function getRecipe(path) {
             },
           },
           {
-            text: "Given this image:\n\n1. First, describe the image\n2. Then, detail the recipe to bake this item in JSON format. Include item names and quantities for the recipe",
+            text: "Given this image:\nOnly Provide the recipe details in JSON format\n Describe of the image as image_description, Recipe name field as recipe_name. Give ingredients as array of objects each containing item_name and quantity. Finally give instructions array. Also include the nutrition count for this recipe as nutrition_count. Only JSON nothing else.",
           },
         ],
       },
